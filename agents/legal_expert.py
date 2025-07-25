@@ -1,4 +1,7 @@
-class LegalExpert:
+from agents.interface_base_expert import BaseExpert
+
+
+class LegalExpert(BaseExpert):
     def __init__(self, context=None):
         """
         Simulated context about legal expert

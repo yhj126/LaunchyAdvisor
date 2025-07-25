@@ -44,7 +44,7 @@ class Orchestrator:
         if not experts:
             experts = ["budget", "legal", "marketing"]
 
-        # Evitar duplicados (por si acaso)
+        # Remove duplicates
         return list(set(experts))
 
 
@@ -65,36 +65,33 @@ class Orchestrator:
 
     def synthesize_responses(self, responses: dict) -> dict:
 
-        # Extract info from each expert, con fallback por si no viene respuesta
+        # Extract info from each expert, with fallback in case there's no response
         budget_resp = responses.get("budget", {})
         legal_resp = responses.get("legal", {})
         marketing_resp = responses.get("marketing", {})
 
-        # Construir mensajes parciales
-        budget_summary = "Presupuesto suficiente." if budget_resp.get("feasible",
-                                                                      False) else "Presupuesto insuficiente."
+        # Build partial summaries
+        budget_summary = "Budget is sufficient." if budget_resp.get("feasible", False) else "Budget is insufficient."
         if "reason" in budget_resp:
             budget_summary += f" ({budget_resp['reason']})"
 
-        legal_summary = "Cumple con regulaciones legales." if legal_resp.get("compliant",
-                                                                             False) else "Existen problemas legales."
+        legal_summary = "Legally compliant." if legal_resp.get("compliant", False) else "Legal issues detected."
         if "issues" in legal_resp and legal_resp["issues"]:
-            legal_summary += " Problemas detectados: " + ", ".join(legal_resp["issues"])
+            legal_summary += " Issues found: " + ", ".join(legal_resp["issues"])
 
-        marketing_summary = "La estrategia de marketing es adecuada." if marketing_resp.get("strategy_fit",
-                                                                                            False) else "La estrategia de marketing necesita revisión."
+        marketing_summary = "Marketing strategy is adequate." if marketing_resp.get("strategy_fit", False) else "Marketing strategy needs review."
         if "recommended_channels" in marketing_resp:
             channels = ", ".join(marketing_resp["recommended_channels"])
-            marketing_summary += f" Canales recomendados: {channels}."
+            marketing_summary += f" Recommended channels: {channels}."
 
-        # Crear resumen general (puedes mejorarlo con un LLM para texto natural)
+        # Build overall summary (can be improved using an LLM for natural language)
         summary = (
-            f"Análisis financiero: {budget_summary}\n"
-            f"Aspectos legales: {legal_summary}\n"
-            f"Estrategia de marketing: {marketing_summary}\n"
+            f"Financial analysis: {budget_summary}\n"
+            f"Legal aspects: {legal_summary}\n"
+            f"Marketing strategy: {marketing_summary}\n"
         )
 
-        # Devolver JSON con resumen y detalles
+        # Return JSON structured response
         return {
             "summary": summary,
             "details": responses

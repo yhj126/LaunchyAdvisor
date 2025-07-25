@@ -1,4 +1,7 @@
-class BudgetExpert:
+from agents.interface_base_expert import BaseExpert
+
+
+class BudgetExpert(BaseExpert):
     def __init__(self, context=None):
         """
         Mock with the estimated budget for this agent.
