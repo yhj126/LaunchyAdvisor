@@ -22,6 +22,30 @@ class BudgetExpert(BaseExpert):
         Analyze the query.
         """
         query_lower = query.lower()
+        expected_costs = self.context["expected_costs"]
+        available_budget = self.context["total_budget"] - self.context["allocated_budget"]
+
+        matched_cost = None
+        estimated_cost = 0
+
+        #Expected cost
+        for cost_name, cost_value in expected_costs.items():
+            if cost_name.replace("_", " ") in query_lower:
+                matched_cost = cost_name
+                estimated_cost = cost_value
+                break
+
+        if matched_cost:
+            if estimated_cost <= available_budget:
+                return {
+                    "feasible": True,
+                    "reason": f"The cost for '{matched_cost}' ({estimated_cost}) fits in the available budget ({available_budget})."
+                }
+            else:
+                return {
+                    "feasible": False,
+                    "reason": f"The cost for '{matched_cost}' ({estimated_cost}) exceeds the available budget ({available_budget})."
+                }
 
         # Default: the query can not be analyzed
         return {
